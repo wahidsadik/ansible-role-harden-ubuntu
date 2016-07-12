@@ -39,7 +39,7 @@
 
 - name: Add authorized key(s) for the user {{deployment_user}}
   action: authorized_key user={{deployment_user}} key="{{ item }}" state=present exclusive=yes
-  with_file: public_keys
+  with_file: '{{public_keys}}'
   when: minimum_public_keys_provided
 
 - name: Disallow root SSH access
