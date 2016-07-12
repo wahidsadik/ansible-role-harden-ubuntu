@@ -18,6 +18,9 @@
 - name: Remove sudo group rights
   action: lineinfile dest=/etc/sudoers regexp="^%sudo" state=absent
 
+- name: Add {{deployment_user}} user
+  action: user name={{deployment_user}} password={{ deployment_password }} shell=/bin/bash groups={{deployment_group}}
+
 - name: Add {{deployment_user}} user to sudoers
   action: lineinfile dest=/etc/sudoers regexp="{{deployment_user}} ALL" line="{{deployment_user}} ALL=(ALL) ALL" state=present
 
