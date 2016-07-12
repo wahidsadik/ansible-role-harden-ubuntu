@@ -1,0 +1,3 @@
+---
+num_public_keys: "{{ public_keys | length }}"
+minimum_public_keys_provided: "{{ num_public_keys | int > 0 }}"

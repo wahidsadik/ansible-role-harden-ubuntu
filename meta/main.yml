@@ -1,0 +1,18 @@
+galaxy_info:
+  author: Wahid Sadik
+  description: An Ansible role to harden Ubuntu 14.04 LTS after boot up
+  company: N/A
+
+  license: MIT
+
+  min_ansible_version: 1.2
+
+  github_branch: master
+
+  - name: Ubuntu
+    versions:
+      - trusty
+
+  galaxy_tags: ['security']
+
+dependencies: []

@@ -1,0 +1,50 @@
+---
+- debug: msg="deployment_user = {{deployment_user}}"
+- debug: msg="deployment_group = {{deployment_group}}"
+- debug: msg="minimum_public_keys_provided = {{minimum_public_keys_provided}}"
+
+- name: Update APT package cache
+  action: apt update_cache=yes
+
+- name: Run apt-get upgrade
+  action: command apt-get -y upgrade
+
+- name: Install fail2ban
+  action: apt pkg=fail2ban state=installed
+
+- name: Create {{deployment_group}} group
+  action: group name={{deployment_group}} state=present
+
+- name: Remove sudo group rights
+  action: lineinfile dest=/etc/sudoers regexp="^%sudo" state=absent
+
+- name: Add {{deployment_user}} user to sudoers
+  action: lineinfile dest=/etc/sudoers regexp="{{deployment_user}} ALL" line="{{deployment_user}} ALL=(ALL) ALL" state=present
+
+- name: Install unattended-upgrades
+  action: apt pkg=unattended-upgrades state=present
+
+- name: Adjust APT update intervals
+  action: copy src=apt_periodic dest=/etc/apt/apt.conf.d/10periodic
+
+- name: Make sure unattended-upgrades only installs from $ubuntu_release-security
+  action: lineinfile dest=/etc/apt/apt.conf.d/50unattended-upgrades regexp="$ubuntu_release-updates" state=absent
+
+- name: Validate number of public keys
+  fail: msg="public_keys must have 1 or more items"
+  when: not minimum_public_keys_provided
+
+- name: Add authorized key(s) for the user {{deployment_user}}
+  action: authorized_key user={{deployment_user}} key="{{ item }}" state=present exclusive=yes
+  with_file: public_keys
+  when: minimum_public_keys_provided
+
+- name: Disallow root SSH access
+  action: lineinfile dest=/etc/ssh/sshd_config regexp="^PermitRootLogin" line="PermitRootLogin no" state=present
+  when: minimum_public_keys_provided
+  notify: Restart ssh
+
+- name: Disallow password authentication
+  action: lineinfile dest=/etc/ssh/sshd_config regexp="^PasswordAuthentication" line="PasswordAuthentication no" state=present
+  when: minimum_public_keys_provided
+  notify: Restart ssh
