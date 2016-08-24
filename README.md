@@ -13,7 +13,7 @@ To add this from your Ansible `requirements.yml`, add this to the file:
 
     src: wahidsadik.ansible-role-harden-ubuntu
 
-Waring!
+Warning!
 > - The role will prevent login of `root` user.
 > - The role will only allow login via SSH. You need to provide one or more public of machines you want to access from.
 > - Some parts non-idempotent, hence rerunning may not work.
@@ -39,8 +39,8 @@ Users must pass the following parameters (i.e. variables):
 > `$ echo 'import crypt,getpass; print crypt.crypt(getpass.getpass(), "$6$AC3bdCF7")' | python -`
 >
 > Here, `$6$` represents SHA-512 algo, and `AC3bdCF7` is the salt.
-> or, use mkpasswd which is available most linux systems; if not, install it from `whois` package, and then issue  
-> `$ mkpasswd --method=SHA-512 # random salt`
+> or, use mkpasswd which is available most linux systems; if not, install it from `whois` package, and then run:  
+> `$ mkpasswd --method=SHA-512 # random salt`  
 > `$ mkpasswd --method=SHA-512 --salt=AC3bdCF7 # fixed salt`
 >
 > **None of these works on a Mac.**
@@ -48,9 +48,11 @@ Users must pass the following parameters (i.e. variables):
 
 - `public_keys`: List of filename(s) containing public keys of machines you want to access the new machine from. Define it like this:
 
-      public_keys:
-        - abc
-        - def
+
+    public_keys:
+      - abc
+      - def
+
 
 Dependencies
 ------------
@@ -83,7 +85,7 @@ Including an example of how to use your role (for instance, with variables passe
              public_keys: public_keys
            }
 
-^^ Try it out.
+- [ ] Try it out.
 
 License
 -------
