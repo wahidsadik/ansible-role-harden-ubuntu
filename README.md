@@ -3,7 +3,7 @@
 Role Name
 =========
 
-An Ansible role to harden Ubuntu 14.04 LTS after boot up.
+An Ansible role to harden Ubuntu 14.04 LTS and 16.04 LTS after boot up.
 
 The role is available on Ansible Galaxy: [https://galaxy.ansible.com/wahidsadik/ansible-role-harden-ubuntu](https://galaxy.ansible.com/wahidsadik/ansible-role-harden-ubuntu).
 
@@ -18,10 +18,19 @@ Warning!
 > - The role will only allow login via SSH. You need to provide one or more public of machines you want to access from.
 > - Some parts non-idempotent, hence rerunning may not work.
 
+Warning!
+> The role current doesn't handle more that 1 public file. When provided with more than 1, it will put the last one.
+>
+> [ ] Fix it.
+
 Requirements
 ------------
 
-None.
+The target system must have `python2` installed on it. On Ubuntu 16.04, it may not be the case. To fix that, run this first:
+
+`$ ansible all -i host -u root -k -m raw -a "apt-get install -y python python-simplejson aptitude"`
+
+Feel free to replace `host` and `-u` parameter.
 
 Role Variables
 --------------
@@ -35,23 +44,36 @@ Users must pass the following parameters (i.e. variables):
 
 - `deployment_password`. Has to be encrypted password. See the below section on how to generate one.
 
-> Encrypted password, generated on a Linux boxusing:  
+#### Option 1: Generate it on the fly
+
+See the first example for this.
+
+
+#### Option 2: Pre-generate it
+
+See the second example for this.
+
+> Encrypted password, generated on a Linux box using:  
 > `$ echo 'import crypt,getpass; print crypt.crypt(getpass.getpass(), "$6$AC3bdCF7")' | python -`
 >
-> Here, `$6$` represents SHA-512 algo, and `AC3bdCF7` is the salt.
+> Here, `$6$` represents SHA-512 algorithm, and `AC3bdCF7` is the salt.
 > or, use mkpasswd which is available most linux systems; if not, install it from `whois` package, and then run:  
 > `$ mkpasswd --method=SHA-512 # random salt`  
 > `$ mkpasswd --method=SHA-512 --salt=AC3bdCF7 # fixed salt`
 >
 > **None of these works on a Mac.**
 
+#### Option 3...n: Other possibilities
+
+- Store hashed password in vault
+- Store salt in vault
+- Pass hashed password from CLI (and don't record the command :), etc.
 
 - `public_keys`: List of filename(s) containing public keys of machines you want to access the new machine from. Define it like this:
 
 
     public_keys:
       - abc
-      - def
 
 
 Dependencies
@@ -62,30 +84,50 @@ It is assumed that this role will be run right after creating a new machine. Hen
 Example Playbook
 ----------------
 
-TBD
+Example 1: Base example
 
-Show examples of:
+    - hosts: all
+      remote_user: root
 
-- With simplest possible variables
+      vars_prompt:
+        - name: "deployment_password"
+          prompt: "What password to use for new user?"
+          private: yes
+          encrypt: "sha512_crypt"
+          confirm: yes
+          salt_size: 7
 
+      roles:
+        - {
+            role: wahidsadik.ansible-role-harden-ubuntu,
+            public_keys: [
+              '~/.ssh/id_rsa.pub'
+            ]
 
-- With non-root user and in simplest possible variables
-- With non-root user with full (and if needed other combinations) variable sets
+          }
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+Assuming you saved this playbook as `test-hardening-role.yml`, run it like this:
+
+- `ansible-playbook -i <my-ip>, test-hardening-role.yml --ask-pass`. Enter `root` user's password at prompt.
+- `ansible-playbook -i <my-ip>, test-hardening-role.yml --user=ubuntu --ask-pass`. When your super user is something other than `root`, in this case it's `ubuntu`. Enter user's password at prompt.
+
+Example 2: With non-root user and pre-configured password
 
     - hosts: servers
       vars:
         public_keys:
-          - abc
-          - def             
+          - '~/.ssh/id_rsa.pub'
       roles:
          - { role: wahidsadik.ansible-role-harden-ubuntu,
-             deployment_password: $6$AC3bdCF7$oDbt3TE2NHQmsWWHrK1hN17utmFtQJt00fV0N.xA664IyGDpHEJmZbGZ..b5J3ibyvXlbc7jN3VGh3lBt4dc5/,
-             public_keys: public_keys
+             deployment_password: $6$AC3bdCF7$oDbt3TE2NHQmsWWHrK1hN17utmFtQJt00fV0N.xA664IyGDpHEJmZbGZ..b5J3ibyvXlbc7jN3VGh3lBt4dc5/
+             # public_keys is passed from above
            }
 
-- [ ] Try it out.
+You can run it the same way it's shown in last example.
+
+Example 3: Playbook for Ubuntu 16.04 LTS
+
+You will need special configuration for Ubuntu 16.04. See this [gist](https://gist.github.com/wahidsadik/6f163c6eb7e286c3d19d378c42900c5a).
 
 License
 -------
