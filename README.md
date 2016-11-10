@@ -26,11 +26,7 @@ Warning!
 Requirements
 ------------
 
-The target system must have `python2` installed on it. On Ubuntu 16.04, it may not be the case. To fix that, run this first:
-
-`$ ansible all -i host -u root -k -m raw -a "apt-get install -y python python-simplejson aptitude"`
-
-Feel free to replace `host` and `-u` parameter.
+The target system must have `python2` installed on it. On Ubuntu 16.04, it may not be the case. See example 3 below to see how to fix that.
 
 Role Variables
 --------------
