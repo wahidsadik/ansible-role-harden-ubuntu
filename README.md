@@ -123,8 +123,8 @@ You can run it the same way it's shown in last example.
 
 #### Example 3: Ready to use playbook
 
-Ubuntu 14.04: [ubuntu-14.04-hardening.yml](https://gist.github.com/wahidsadik/03396d9fb14b8342f26cd65792e1509c)
-Ubuntu 16.04: [ubuntu-16.04-hardening.yml](https://gist.github.com/wahidsadik/e0005717c783b426a69b7099385a44b7)
+- Ubuntu 14.04: [ubuntu-14.04-hardening.yml](https://gist.github.com/wahidsadik/03396d9fb14b8342f26cd65792e1509c)
+- Ubuntu 16.04: [ubuntu-16.04-hardening.yml](https://gist.github.com/wahidsadik/e0005717c783b426a69b7099385a44b7)
 
 
 License
