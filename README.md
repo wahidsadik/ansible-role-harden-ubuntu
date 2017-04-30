@@ -80,7 +80,7 @@ It is assumed that this role will be run right after creating a new machine. Hen
 Example Playbook
 ----------------
 
-Example 1: Base example
+#### Example 1: Base example
 
     - hosts: all
       remote_user: root
@@ -107,7 +107,7 @@ Assuming you saved this playbook as `test-hardening-role.yml`, run it like this:
 - `ansible-playbook -i <my-ip>, test-hardening-role.yml --ask-pass`. Enter `root` user's password at prompt.
 - `ansible-playbook -i <my-ip>, test-hardening-role.yml --user=ubuntu --ask-pass`. When your super user is something other than `root`, in this case it's `ubuntu`. Enter user's password at prompt.
 
-Example 2: With non-root user and pre-configured password
+#### Example 2: With non-root user and pre-configured password
 
     - hosts: servers
       vars:
@@ -121,9 +121,11 @@ Example 2: With non-root user and pre-configured password
 
 You can run it the same way it's shown in last example.
 
-Example 3: Playbook for Ubuntu 16.04 LTS
+#### Example 3: Ready to use playbook
 
-You will need special configuration for Ubuntu 16.04. See this [gist](https://gist.github.com/wahidsadik/6f163c6eb7e286c3d19d378c42900c5a).
+Ubuntu 14.04: [ubuntu-14.04-hardening.yml](https://gist.github.com/wahidsadik/03396d9fb14b8342f26cd65792e1509c)
+Ubuntu 16.04: [ubuntu-16.04-hardening.yml](https://gist.github.com/wahidsadik/e0005717c783b426a69b7099385a44b7)
+
 
 License
 -------
