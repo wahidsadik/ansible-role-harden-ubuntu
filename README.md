@@ -109,7 +109,8 @@ Assuming you saved this playbook as `test-hardening-role.yml`, run it like this:
         public_keys:
           - '~/.ssh/id_rsa.pub'
       roles:
-         - { role: wahidsadik.ansible-role-harden-ubuntu,
+         - { 
+             role: wahidsadik.ansible-role-harden-ubuntu,
              deployment_password: $6$AC3bdCF7$oDbt3TE2NHQmsWWHrK1hN17utmFtQJt00fV0N.xA664IyGDpHEJmZbGZ..b5J3ibyvXlbc7jN3VGh3lBt4dc5/
              # public_keys is passed from above
            }
