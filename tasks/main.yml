@@ -12,6 +12,29 @@
 - name: Install fail2ban
   action: apt pkg=fail2ban state=installed
 
+- name: Install ufw
+  action: apt pkg=ufw state=installed
+
+- name: ufw - enable IN on ssh from any host/port
+  ufw:
+    rule: limit
+    port: ssh
+    proto: tcp
+
+- name: ufw - disable IN on all other ports from any host/port
+  ufw:
+    direction: in
+    rule: deny
+
+- name: ufw - enable OUT on all other ports to any host/port
+  ufw:
+    direction: out
+    rule: allow
+
+- name: ufw - reload
+  ufw:
+    state: reloaded
+
 - name: Create {{deployment_group}} group
   action: group name={{deployment_group}} state=present
 
@@ -38,7 +61,7 @@
   when: not minimum_public_keys_provided
 
 - name: Add authorized key(s) for the user {{deployment_user}}
-  action: authorized_key user={{deployment_user}} key="{{ item }}" state=present exclusive=yes
+  action: authorized_key user={{deployment_user}} key="{{ item }}" state=present
   with_file: '{{public_keys}}'
   when: minimum_public_keys_provided
 

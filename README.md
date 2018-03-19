@@ -18,11 +18,6 @@ Warning!
 > - The role will only allow login via SSH. You need to provide one or more public of machines you want to access from.
 > - Some parts non-idempotent, hence rerunning may not work.
 
-Warning!
-> The role current doesn't handle more that 1 public file. When provided with more than 1, it will put the last one.
->
-> [ ] Fix it.
-
 Requirements
 ------------
 
