@@ -1,0 +1,22 @@
+- name: Install ufw
+  action: apt pkg=ufw state=installed
+
+- name: ufw - enable IN on ssh from any host/port
+  ufw:
+    rule: limit
+    port: ssh
+    proto: tcp
+
+- name: ufw - disable IN on all other ports from any host/port
+  ufw:
+    direction: in
+    rule: deny
+
+- name: ufw - enable OUT on all other ports to any host/port
+  ufw:
+    direction: out
+    rule: allow
+
+- name: ufw - reload
+  ufw:
+    state: reloaded
