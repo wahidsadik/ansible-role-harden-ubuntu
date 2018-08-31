@@ -1,3 +1,11 @@
 ---
+enable_auto_update: True
+enable_fail2ban: True
+enable_ufw: True
+
+add_deployment_user: True
 deployment_user: deployer
 deployment_group: deployer
+
+enable_stop_password_authentication: True
+enable_stop_root_login: True

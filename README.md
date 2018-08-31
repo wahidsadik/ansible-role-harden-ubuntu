@@ -14,9 +14,10 @@ To add this from your Ansible `requirements.yml`, add this to the file:
     src: wahidsadik.ansible-role-harden-ubuntu
 
 Warning!
+> - All aspects are configurable.
 > - The role will prevent login of `root` user.
 > - The role will only allow login via SSH. You need to provide one or more public of machines you want to access from.
-> - Some parts non-idempotent, hence rerunning may not work.
+> - Some parts non-idempotent, hence rerunning may not work without proper toggle.
 
 Requirements
 ------------
@@ -28,10 +29,22 @@ Role Variables
 
 The role defines the following variables in `defaults/main.yml`:
 
+    enable_auto_update: True
+    enable_fail2ban: True
+    enable_ufw: True
+
+    add_deployment_user: True
     deployment_user: deployer
     deployment_group: deployer
 
+    enable_stop_password_authentication: True
+    enable_stop_root_login: True
+
+Set the values of the first 4 variables to `False` disable those behavior. It is highly recommended that all flags should be used.
+
 Users must pass the following parameters (i.e. variables):
+
+TODO: Mention that `enable_stop_password_authentication: True` will impact remote login for `root` user; local SSH should be fine.
 
 - `deployment_password`. Has to be encrypted password. See the below section on how to generate one.
 
@@ -78,8 +91,10 @@ Example Playbook
 #### Example 1: Base example
 
     - hosts: all
-      remote_user: root
 
+      vars:
+        # example uses on how to disable a variable
+        - enable_ufw: False
       vars_prompt:
         - name: "deployment_password"
           prompt: "What password to use for new user?"
@@ -99,8 +114,8 @@ Example Playbook
 
 Assuming you saved this playbook as `test-hardening-role.yml`, run it like this:
 
-- `ansible-playbook -i <my-ip>, test-hardening-role.yml --ask-pass`. Enter `root` user's password at prompt.
-- `ansible-playbook -i <my-ip>, test-hardening-role.yml --user=ubuntu --ask-pass`. When your super user is something other than `root`, in this case it's `ubuntu`. Enter user's password at prompt.
+- `$ ansible-playbook -i <my-ip>, test-hardening-role.yml --user=<connection-user> --ask-pass`. For password-based login. Enter user's password at prompt and then new user's password.
+- `$ ansible-playbook -i <my-ip>, test-hardening-role.yml --user=<connection-user> --become --ask-become-pass`. For SSH-based login. Enter sudo user's password at prompt and then new user's password. 
 
 #### Example 2: With non-root user and pre-configured password
 
@@ -108,11 +123,11 @@ Assuming you saved this playbook as `test-hardening-role.yml`, run it like this:
       vars:
         public_keys:
           - '~/.ssh/id_rsa.pub'
+        # the password is 'test'
+        deployment_password: $6$AC3bdCF7$MA5sPtsGsOei6fCtyyzHeOqBpEzsi.yl9wS1yaP1.nKhuNR6ZBmcouWh6XJkrFdzreENtvUF4Gr2R0gfIQ/PT.
       roles:
          - { 
              role: wahidsadik.ansible-role-harden-ubuntu,
-             deployment_password: $6$AC3bdCF7$oDbt3TE2NHQmsWWHrK1hN17utmFtQJt00fV0N.xA664IyGDpHEJmZbGZ..b5J3ibyvXlbc7jN3VGh3lBt4dc5/
-             # public_keys is passed from above
            }
 
 You can run it the same way it's shown in last example.

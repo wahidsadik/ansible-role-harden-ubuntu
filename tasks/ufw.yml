@@ -1,5 +1,5 @@
 - name: Install ufw
-  action: apt pkg=ufw state=installed
+  action: apt pkg=ufw state=present
 
 - name: ufw - enable IN on ssh from any host/port
   ufw:
