@@ -1,0 +1,41 @@
+# This assumes that you are using this role: https://github.com/wahidsadik/ansible-role-harden-ubuntu
+# Run like this when SSH works with password only: $ ansible-playbook -i <IP>, test-hardening-role-1604.yml --user=<connection-user> --ask-pass 
+# Run like this when SSH works with key: $ ansible-playbook -i <IP>, test-hardening-role-1604.yml --user=<connection-user> --become --ask-become-pass
+
+---
+- hosts: all
+  gather_facts: no # Added this for Ubuntu 16.04
+
+  # Added this block for Ubuntu 16.04
+  pre_tasks:
+    - raw: test -e /usr/bin/python || (apt -y update && apt install -y python-minimal)
+    - raw: apt install -y aptitude
+    - setup:
+
+  vars:
+    ## Uncomment one of these variables to not run the relevant section
+    # add_deployment_user: False
+    # enable_auto_update: False
+    # enable_fail2ban: False
+    # enable_ufw: False
+    public_keys: [
+        '~/.ssh/id_rsa.pub',
+      ]
+    # password is `test`
+    # deployment_password: $6$AC3bdCF7$MA5sPtsGsOei6fCtyyzHeOqBpEzsi.yl9wS1yaP1.nKhuNR6ZBmcouWh6XJkrFdzreENtvUF4Gr2R0gfIQ/PT.
+    # enable_stop_password_authentication: False
+    # enable_stop_root_login: False
+
+  # If you want to use canned password, comment this and uncomment `deployment_password` from above
+  vars_prompt:
+    - name: "deployment_password"
+      prompt: "What password to use for new user?"
+      private: yes
+      encrypt: "sha512_crypt"
+      confirm: yes
+      salt_size: 7
+
+  roles:
+  - { 
+      role: .,
+    }
